@@ -4,13 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../NeurLib.c 
+../NeurLib.c \
+../list.c 
 
 OBJS += \
-./NeurLib.o 
+./NeurLib.o \
+./list.o 
 
 C_DEPS += \
-./NeurLib.d 
+./NeurLib.d \
+./list.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
