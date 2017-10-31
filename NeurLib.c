@@ -5,29 +5,30 @@
  *      Author: David
  */
 #include "NeurLib.h"
+#include <stdlib.h>
 
 
 net *createNetwork(int x, int y, err_code *err)
 {
 	double **temp_netpointer = 0;
-	net net_struct;
+	net *net_struct = 0;
 	err_code internal_err_code;
 
 	if(x > 0 && y > 0)
 	{
-		internal_err_code = CREATE_NETSTRUCT(&net_struct);
+		internal_err_code = CREATE_NETSTRUCT(net_struct);
 
 		if(internal_err_code == SUCCESS)
 		{
-			temp_netpointer = malloc(x * sizeof(double *));
+			temp_netpointer = (double **)malloc(y * sizeof(double *));
 
 			if(temp_netpointer != 0)
 			{
-				for(int i = 0 ; i < x ; x++)
+				for(int i = 0 ; i < y ; i++)
 				{
 					double *A = 0;
 
-					A = malloc(y * sizeof(double *));
+					A = (double *)malloc(x * sizeof(double));
 
 					if(A != 0)
 					{
@@ -46,7 +47,7 @@ net *createNetwork(int x, int y, err_code *err)
 				net_struct->state = ready;
 
 				*err = SUCCESS;
-				return &net_struct;
+				return net_struct;
 			}
 			else
 			{
@@ -69,14 +70,8 @@ net *createNetwork(int x, int y, err_code *err)
 
 err_code destroyNetwork(net *netpointer)
 {
-	if(!free(netpointer))
-	{
-		return SUCCESS;
-	}
-	else
-	{
-		return MEMDEALLOC_FAILED;
-	}
+	free(netpointer);
+	return SUCCESS;
 }
 
 err_code learn(net *netpointer,const vector *input,const vector *output, learn_type type)
@@ -193,8 +188,6 @@ err_code disable_Debug()
 	return SUCCESS;
 }
 
-
-
 void INIT_NET(net *netpointer, double x)
 {
 
@@ -220,8 +213,6 @@ err_code CREATE_NETSTRUCT(net *p)
 		return INVALID_ARGUMENT;
 	}
 }
-
-
 
 err_code CHECK_VECTOR_INPUTS(net *netpointer, vector *input, vector *output)
 {
@@ -263,7 +254,7 @@ err_code HANLDE_DEBUG(char *str)
 	}
 }
 
-void SORT_ROW(double *row_elements, int size)
+void SORT_ROW(double **row_elements, int size)
 {
 	int finished;
 	double *temp_pointer;
@@ -275,9 +266,9 @@ void SORT_ROW(double *row_elements, int size)
 		{
 			if(row_elements[i+1] < row_elements[i])
 			{
-				temp_pointer = row_elements[i+1];
-				row_elements[i+1] = row_elements[i];
-				row_elements[i] = temp_pointer;
+				temp_pointer = row_elements + i + 1;
+				&(row_elements + 1) = &row_elements[i];
+				&(row_elements[i]) = temp_pointer;
 
 				finished = 0;
 			}
