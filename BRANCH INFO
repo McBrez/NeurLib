@@ -1,0 +1,1 @@
+In this branch memory optimisation should be done. The biggest issue would be the network NeurLib.c. Instead of a List, a double could be used.
